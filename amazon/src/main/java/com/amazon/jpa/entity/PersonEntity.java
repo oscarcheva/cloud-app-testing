@@ -1,16 +1,13 @@
-package com.amazon.JPA;
+package com.amazon.jpa.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.io.Serializable;
 
-@Entity
 @Table(name = "PERSON")
 @Builder
 @Getter
@@ -20,8 +17,6 @@ import java.io.Serializable;
 public class PersonEntity implements Serializable {
 
     @Id
-    @jakarta.persistence.Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column("id")
     private Long id;
 
@@ -30,4 +25,12 @@ public class PersonEntity implements Serializable {
 
     @Column("last_name")
     private String lastName;
+
+    @Column("house_id")
+    private Long house_id;
+
+    @Transient
+    private HouseEntity house;
+
+
 }

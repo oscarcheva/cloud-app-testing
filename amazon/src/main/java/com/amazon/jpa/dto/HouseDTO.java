@@ -1,14 +1,16 @@
-package com.amazon.JPA;
+package com.amazon.jpa.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonDTO {
+public class HouseDTO {
 
     private Long id;
 
@@ -16,5 +18,8 @@ public class PersonDTO {
     private String name;
 
     @NotNull
-    private String lastName;
+    private String address;
+
+    List<PersonDTO>persons;
+
 }

@@ -1,5 +1,9 @@
-package com.amazon.JPA;
+package com.amazon.jpa;
 
+import com.amazon.jpa.dto.PersonDTO;
+import com.amazon.jpa.entity.PersonEntity;
+import com.amazon.jpa.repository.PersonRepo;
+import com.amazon.jpa.service.PersonService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,15 +52,6 @@ class PersonServiceTest {
             .lastName(GROOT + 1)
             .build();
 
-    PersonDTO personDTO2 = PersonDTO.builder()
-            .name(GROOT)
-            .lastName(GROOT + 2)
-            .build();
-
-    PersonDTO personDTO3 = PersonDTO.builder()
-            .name(GROOT)
-            .lastName(GROOT + 3)
-            .build();
 
     @Test
     void getPersonTest() {

@@ -1,5 +1,7 @@
-package com.amazon.JPA;
+package com.amazon.jpa.controller;
 
+import com.amazon.jpa.dto.PersonDTO;
+import com.amazon.jpa.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

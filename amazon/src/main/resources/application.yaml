@@ -1,6 +1,6 @@
 spring:
   r2dbc:
-    url: r2dbc:mysql://mydatabase.ccgvbsnacswx.sa-east-1.rds.amazonaws.com:3306/MYDB?zeroDateTimeBehavior=convertToNull&useSSL=false&useServerPrepareStatement=true
+    url: r2dbc:mysql://mydatabase.ccgvbsnacswx.sa-east-1.rds.amazonaws.com:3306/amazonTest?zeroDateTimeBehavior=convertToNull&useSSL=false&useServerPrepareStatement=true
     username: admin
     password: superbowser
 

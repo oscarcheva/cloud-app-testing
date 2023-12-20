@@ -7,7 +7,7 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "PERSON")
+@Table(name = "person")
 @Builder
 @Getter
 @Setter
@@ -16,6 +16,7 @@ import java.io.Serializable;
 public class PersonEntity implements Serializable {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 
@@ -25,11 +26,9 @@ public class PersonEntity implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "house_id")
-    private Long house_id;
-
     @ManyToOne
     @JoinColumn(name = "house_id",nullable = false)
+    @Transient
     private HouseEntity house;
 
 

@@ -6,7 +6,7 @@ import java.util.Set;
 
 @Entity
 @Builder
-@Table(name = "HOUSE")
+@Table(name = "house")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -14,6 +14,7 @@ import java.util.Set;
 public class HouseEntity {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 

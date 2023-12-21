@@ -4,6 +4,8 @@ package com.gcp.jpa.service;
 import com.gcp.error.GoogleException;
 import com.gcp.jpa.dto.HouseDTO;
 import com.gcp.jpa.entity.HouseEntity;
+import com.gcp.jpa.mappers.HouseMapper;
+import com.gcp.jpa.mappers.PersonMapper;
 import com.gcp.jpa.repository.HouseRepo;
 import com.gcp.jpa.repository.PersonRepo;
 import lombok.RequiredArgsConstructor;
@@ -26,25 +28,26 @@ public class HouseService {
         return Mono.fromCallable(() -> houseRepo.findById(id).orElse(new HouseEntity()))
                 .subscribeOn(Schedulers.boundedElastic())
                 .switchIfEmpty(Mono.error(new GoogleException(NOT_FOUND)))
-                .map(houseEntity -> modelMapper.map(houseEntity, HouseDTO.class))
+                .map(HouseMapper::mapEntityToDTO)
                 .onErrorResume(this::handleError);
     }
 
     public ParallelFlux<HouseDTO> getAllHouses() {
         return Mono.fromCallable(houseRepo::findAll)
+                .subscribeOn(Schedulers.boundedElastic())
                 .flatMapMany(Flux::fromIterable)
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map(houseEntity -> modelMapper.map(houseEntity, HouseDTO.class));
+                .map(HouseMapper::mapEntityToDTO);
     }
 
 
     public Mono<HouseDTO> createHouse(HouseDTO houseDTO) {
         return Mono.just(houseDTO)
                 .subscribeOn(Schedulers.boundedElastic())
-                .map(dto -> modelMapper.map(dto, HouseEntity.class))
+                .map(HouseMapper::mapDtoToEntity)
                 .map(houseRepo::save)
-                .map(v -> modelMapper.map(v, HouseDTO.class))
+                .map(HouseMapper::mapEntityToDTO)
                 .onErrorResume(this::handleError);
 
     }
@@ -53,10 +56,10 @@ public class HouseService {
         return getHouse(houseDTO.getId())
                 .subscribeOn(Schedulers.boundedElastic())
                 .map(house -> {
-                    var houseEntity = modelMapper.map(house, HouseEntity.class);
+                    var houseEntity = HouseMapper.mapDtoToEntity(houseDTO);
                     return houseRepo.save(houseEntity);
                 })
-                .map(v -> modelMapper.map(v, HouseDTO.class))
+                .map(HouseMapper::mapEntityToDTO)
                 .onErrorResume(this::handleError);
 
 
@@ -65,12 +68,12 @@ public class HouseService {
     public Mono<HouseDTO> deleteHouse(Long id) {
         return getHouse(id)
                 .subscribeOn(Schedulers.boundedElastic())
-                .map(dto -> modelMapper.map(dto, HouseEntity.class))
+                .map(HouseMapper::mapDtoToEntity)
                 .map(entity -> {
                     houseRepo.delete(entity);
                     return entity;
                 })
-                .map(v -> modelMapper.map(v, HouseDTO.class))
+                .map(HouseMapper::mapEntityToDTO)
                 .onErrorResume(this::handleError);
 
     }

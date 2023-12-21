@@ -3,6 +3,7 @@ package com.gcp.jpa.service;
 import com.gcp.error.GoogleException;
 import com.gcp.jpa.dto.PersonDTO;
 import com.gcp.jpa.entity.PersonEntity;
+import com.gcp.jpa.mappers.PersonMapper;
 import com.gcp.jpa.repository.HouseRepo;
 import com.gcp.jpa.repository.PersonRepo;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class PersonService {
                 .flatMapMany(Flux::fromIterable)
                 .subscribeOn(Schedulers.boundedElastic())
                 .parallel()
-                .map(v -> modelMapper.map(v, PersonDTO.class))
+                .map(PersonMapper::mapEntityToDTO)
                 .runOn(Schedulers.boundedElastic())
                 .doOnError(this::handleError);
 
@@ -36,7 +37,7 @@ public class PersonService {
         return Mono.fromCallable(() -> personRepo.findById(id).orElse(new PersonEntity()))
                 .subscribeOn(Schedulers.boundedElastic())
                 .switchIfEmpty(Mono.error(new GoogleException(NOT_FOUND)))
-                .map(v -> modelMapper.map(v, PersonDTO.class))
+                .map(PersonMapper::mapEntityToDTO)
                 .onErrorResume(this::handleError);
     }
 
@@ -44,9 +45,9 @@ public class PersonService {
     public Mono<PersonDTO> createPerson(PersonDTO personDTO) {
         return Mono.just(personDTO)
                 .subscribeOn(Schedulers.boundedElastic())
-                .map(personDto -> modelMapper.map(personDto, PersonEntity.class))
+                .map(PersonMapper::mapDtoToEntity)
                 .map(personRepo::save)
-                .map(entity -> modelMapper.map(entity, PersonDTO.class))
+                .map(PersonMapper::mapEntityToDTO)
                 .onErrorResume(this::handleError);
 
     }
@@ -54,16 +55,16 @@ public class PersonService {
     public Mono<PersonDTO> updatePerson(long id, PersonDTO personDTO) {
         return getPerson(id)
                 .switchIfEmpty(Mono.error(new GoogleException(NOT_FOUND)))
+                .subscribeOn(Schedulers.boundedElastic())
                 .map(dto -> {
                     dto.setHouse(personDTO.getHouse());
                     dto.setName(personDTO.getName());
                     dto.setLastName(personDTO.getLastName());
-                    var entity = modelMapper.map(dto, PersonEntity.class);
+                    var entity = PersonMapper.mapDtoToEntity(dto);
                     entity.setId(id);
-                    return entity;
+                    return personRepo.save(entity);
                 })
-                .map(personRepo::save)
-                .map(entity -> modelMapper.map(entity, PersonDTO.class))
+                .map(PersonMapper::mapEntityToDTO)
                 .onErrorResume(this::handleError);
     }
 
@@ -71,17 +72,18 @@ public class PersonService {
         return getPerson(id)
                 .subscribeOn(Schedulers.boundedElastic())
                 .switchIfEmpty(Mono.error(new GoogleException(NOT_FOUND)))
-                .map(personDTO -> modelMapper.map(personDTO, PersonEntity.class))
-                .map(entity-> {
+                .map(PersonMapper::mapDtoToEntity)
+                .map(entity -> {
                     personRepo.delete(entity);
-                    return  entity;
+                    return entity;
                 })
-                .map(entity -> modelMapper.map(entity, PersonDTO.class))
+                .map(PersonMapper::mapEntityToDTO)
                 .onErrorResume(this::handleError);
     }
 
     private <T> Mono<T> handleError(Throwable throwable) {
         return Mono.error(throwable);
     }
+
 
 }

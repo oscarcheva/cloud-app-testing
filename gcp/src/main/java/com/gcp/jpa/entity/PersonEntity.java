@@ -1,5 +1,6 @@
 package com.gcp.jpa.entity;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,9 +27,8 @@ public class PersonEntity implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    @ManyToOne
-    @JoinColumn(name = "house_id",nullable = false)
-    @Transient
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "house_id" )
     private HouseEntity house;
 
 

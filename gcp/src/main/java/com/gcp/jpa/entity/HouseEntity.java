@@ -1,7 +1,13 @@
 package com.gcp.jpa.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,7 +30,7 @@ public class HouseEntity {
     @Column(name = "address")
     private String address;
 
-    @OneToMany(mappedBy="house")
-    Set<PersonEntity> persons;
+    @OneToMany(mappedBy="house", fetch = FetchType.EAGER)
+    private Set<PersonEntity> persons;
 
 }

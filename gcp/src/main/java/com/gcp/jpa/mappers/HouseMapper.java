@@ -14,7 +14,7 @@ public final class HouseMapper {
 
     public static HouseEntity mapDtoToEntity(HouseDTO houseDTO) {
         Set<PersonEntity> personEntityList = new HashSet<>();
-        if (!(houseDTO.getPersons().isEmpty()))
+        if (houseDTO.getPersons() != null && !(houseDTO.getPersons().isEmpty()))
             houseDTO.getPersons().forEach(personEntity -> personEntityList.add(mapPersonDtoToEntity(personEntity)));
 
         return HouseEntity.builder()
@@ -28,7 +28,7 @@ public final class HouseMapper {
 
     public static HouseDTO mapEntityToDTO(HouseEntity houseEntity) {
         List<PersonDTO> personDTOList = new ArrayList<>();
-        if (!(houseEntity.getPersons().isEmpty()))
+        if (houseEntity.getPersons() != null && !(houseEntity.getPersons().isEmpty()))
             houseEntity.getPersons().forEach(personEntity -> personDTOList.add(mapPersonEntityToDTO(personEntity)));
 
 
